@@ -12,9 +12,9 @@ def check_port_available(port: int) -> str:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.bind(('127.0.0.1', port))
         s.close()
-        return f"✅ Port {port} is available"
+        return f"[OK] Port {port} is available"
     except OSError as e:
-        return f"❌ Port {port} is already in use: {e}"
+        return f"[FAIL] Port {port} is already in use: {e}"
 
 @mcp.tool()
 def check_webcam() -> str:
@@ -26,12 +26,12 @@ def check_webcam() -> str:
             ret, frame = cap.read()
             h, w = frame.shape[:2] if ret else (0, 0)
             cap.release()
-            return f"✅ Webcam OK - Resolution: {w}x{h}"
-        return "❌ Webcam not accessible"
+            return f"[OK] Webcam OK - Resolution: {w}x{h}"
+        return "[FAIL] Webcam not accessible"
     except ImportError:
-        return "❌ OpenCV not installed"
+        return "[FAIL] OpenCV not installed"
     except Exception as e:
-        return f"❌ Webcam error: {type(e).__name__}"
+        return f"[FAIL] Webcam error: {type(e).__name__}"
 
 @mcp.tool()
 def check_obs_connection(port: int = 4455, password: str = "") -> str:
@@ -41,13 +41,13 @@ def check_obs_connection(port: int = 4455, password: str = "") -> str:
         client = obs.ReqClient(host='localhost', port=port, password=password, timeout=3)
         ver = client.get_version()
         client.disconnect()
-        return f"✅ OBS Connected - Version: {ver.obs_version}"
+        return f"[OK] OBS Connected - Version: {ver.obs_version}"
     except ImportError:
-        return "❌ obsws-python not installed"
+        return "[FAIL] obsws-python not installed"
     except ConnectionRefusedError:
-        return "❌ OBS not running or WebSocket disabled"
+        return "[FAIL] OBS not running or WebSocket disabled"
     except Exception as e:
-        return f"❌ OBS Connection Failed: {type(e).__name__}"
+        return f"[FAIL] OBS Connection Failed: {type(e).__name__}"
 
 @mcp.tool()
 def check_mediapipe_models() -> str:
@@ -61,9 +61,9 @@ def check_mediapipe_models() -> str:
         path = os.path.join("models", filename)
         if os.path.exists(path):
             size_mb = os.path.getsize(path) / (1024*1024)
-            results.append(f"✅ {name}: {path} ({size_mb:.1f}MB)")
+            results.append(f"[OK] {name}: {path} ({size_mb:.1f}MB)")
         else:
-            results.append(f"❌ {name}: {path} NOT FOUND")
+            results.append(f"[FAIL] {name}: {path} NOT FOUND")
     return "\n".join(results)
 
 @mcp.tool()

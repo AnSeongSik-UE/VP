@@ -21,21 +21,21 @@ class OBSController:
         """방송용 씬 자동 구성"""
         # UE 게임 캡처 소스 확인
         sources = self.client.get_input_list()
-        print(f"📺 Available sources: {[s['inputName'] for s in sources.inputs]}")
+        print(f"[OBS] Available sources: {[s['inputName'] for s in sources.inputs]}")
         
         # 씬 전환
         self.client.set_current_program_scene('VP_Main')
-        print("🎬 Switched to VP_Main scene")
+        print("[OBS] Switched to VP_Main scene")
     
     def start_streaming(self):
         """치지직 RTMP 스트리밍 시작"""
         self.client.start_stream()
-        print("🔴 Streaming started (CHZZK RTMP)")
+        print("[STREAM] Streaming started (CHZZK RTMP)")
     
     def stop_streaming(self):
         """스트리밍 중지"""
         self.client.stop_stream()
-        print("⏹ Streaming stopped")
+        print("[STREAM] Streaming stopped")
     
     def get_status(self) -> dict:
         """방송 상태 조회"""
@@ -80,7 +80,7 @@ class PipelineLauncher:
         
         all_ok = True
         for name, (ok, msg) in checks.items():
-            status = "✅" if ok else "❌"
+            status = "[OK]" if ok else "[FAIL]"
             print(f"  {status} {name}: {msg}")
             if not ok:
                 all_ok = False
@@ -89,19 +89,19 @@ class PipelineLauncher:
     
     def launch(self):
         """전체 파이프라인 순차 실행"""
-        print("🚀 VP Pipeline Launcher")
+        print("[*] VP Pipeline Launcher")
         print("=" * 50)
         
         # 1. 사전 점검
-        print("\n📋 Preflight Check...")
+        print("\n[*] Preflight Check...")
         if not self.preflight_check():
-            print("\n❌ Preflight failed. Fix issues above and retry.")
+            print("\n[FAIL] Preflight failed. Fix issues above and retry.")
             return
         
-        print("\n✅ All checks passed!")
+        print("\n[OK] All checks passed!")
         
         # 2. Unreal Engine 실행 (백그라운드)
-        print("\n🎮 Launching Unreal Engine...")
+        print("\n[UE] Launching Unreal Engine...")
         self.processes['ue'] = subprocess.Popen([
             r"C:\Program Files\Epic Games\UE_5.7\Engine\Binaries\Win64\UnrealEditor.exe",
             r"C:\UnrealWork\VP\VPPipeline\VPPipeline.uproject",
@@ -110,7 +110,7 @@ class PipelineLauncher:
         time.sleep(10)  # UE 로딩 대기
         
         # 3. 트래킹 모듈 실행
-        print("\n🎥 Launching Tracker...")
+        print("\n[TRACK] Launching Tracker...")
         self.processes['tracker'] = subprocess.Popen(
             [sys.executable, "sender.py"],
             cwd=os.path.join(os.path.dirname(__file__), "vp-tracker")
@@ -118,12 +118,12 @@ class PipelineLauncher:
         time.sleep(3)
         
         # 4. OBS 씬 전환 및 스트리밍 준비
-        print("\n📺 Configuring OBS...")
+        print("\n[OBS] Configuring OBS...")
         from obs_controller import OBSController
         obs_ctrl = OBSController()
         obs_ctrl.setup_streaming_scene()
         
-        print("\n✅ Pipeline Ready!")
+        print("\n[OK] Pipeline Ready!")
         print("   - Press 'S' to start streaming")
         print("   - Press 'Q' to quit")
         
@@ -141,12 +141,12 @@ class PipelineLauncher:
             pass
         
         # 6. 정리
-        print("\n🧹 Shutting down...")
+        print("\n[*] Shutting down...")
         obs_ctrl.stop_streaming()
         obs_ctrl.disconnect()
         for name, proc in self.processes.items():
             proc.terminate()
-        print("👋 Pipeline stopped")
+        print("[*] Pipeline stopped")
     
     def _check_webcam(self):
         try:

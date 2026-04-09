@@ -98,3 +98,17 @@
 - phase0_setup.md 수정: unreal-mcp 경로/엔트리포인트 실제 구조 반영
 - UE 5.7 프로젝트 생성 + 플러그인 활성화 (사용자 수동 완료)
 - MCP 서버 import 및 도구 등록 검증 완료
+
+## 2026.04.10 08:35:24
+### Phase 1: MediaPipe 트래킹 + UDP 발신 모듈 구현
+- MediaPipe 모델 다운로드: face_landmarker.task (3.6MB), pose_landmarker_heavy.task (29.2MB)
+- `tracker.py` 구현: UnifiedTracker 클래스 (FaceLandmarker + PoseLandmarker 동시 추론, Thread-safe Queue)
+- `sender.py` 구현: RawUDPSender (바이너리 UDP) + OSCSender (OSC 프로토콜) 듀얼 모드
+- `test_phase1.py` 검증 스크립트 작성
+- Windows CP949 인코딩 이슈 해결: 모든 .py 파일에서 이모지 → ASCII 텍스트로 교체
+- 검증 결과 (1280x720, CPU XNNPACK):
+  - [PASS] 웹캠 캡처: 108프레임/8초
+  - [PASS] ARKit 52 블렌드쉐이프: 52개, 108/108 프레임 검출 (100%)
+  - [PASS] PoseLandmarker 33 랜드마크: 33개
+  - [FAIL] 추론 FPS: 14.1fps (목표 20fps 미달) — Face+Pose 동시 순차추론 CPU 부하
+- FPS 최적화는 Phase 3 프로파일링 단계에서 대응 예정 (모델 교체, 해상도 축소 등)
