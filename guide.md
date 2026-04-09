@@ -7,7 +7,7 @@
 
 * **타겟 플랫폼:** 치지직 (CHZZK) 실시간 스트리밍
 * **주요 기술 스택:** Unreal Engine 5.7 (C++), Python 3.12+, OBS Studio 28.0+, MediaPipe Tasks API (FaceLandmarker + PoseLandmarker)
-* **AI 자동화 스택:** Claude Desktop + MCP (Model Context Protocol), Unreal MCP Server, Cursor/Gemini CLI
+* **AI 자동화 스택:** Claude Desktop + MCP (Model Context Protocol), Unreal MCP Server, Antigravity/Gemini CLI
 * **핵심 과제:** 단일 웹캠 비전 스트림 기반 전신/표정 동시 추론, C++ 기반 엔진 코어 네트워크 최적화, MCP 기반 개발 워크플로우 자동화
 * **최소 하드웨어 요구사항:** NVIDIA RTX 3060+ (Lumen 사용 시), RAM 16GB+, 노트북 내장 웹캠 720p+
 
@@ -60,8 +60,9 @@
   - 네트워크 포트 바인딩 확인 (UDP/OSC 포트, OBS WebSocket 4455)
   - UE Remote Control API를 통한 에디터 내 프로퍼티 조정
   - Python 스크립트 생성 및 트래킹 모듈 디버깅
-* **Unreal MCP Server 통합:** 커뮤니티 오픈소스 Unreal MCP Server(예: `chongdashu/unreal-mcp`)를 활용하여 Claude/Cursor가 언리얼 에디터를 자연어로 제어.
-* **Cursor/Gemini CLI 병행:** 복잡한 C++ 플러그인 코드와 Blueprint 로직을 AI 코딩 어시스턴트로 신속하게 생성 및 유지보수.
+* **Unreal MCP Server 통합:** 커뮤니티 오픈소스 Unreal MCP Server(예: `chongdashu/unreal-mcp`)를 활용하여 Claude/Antigravity가 언리얼 에디터를 자연어로 제어.
+* **Antigravity/Gemini CLI 병행:** 복잡한 C++ 플러그인 코드와 Blueprint 로직을 AI 코딩 어시스턴트로 신속하게 생성 및 유지보수.
+
 
 ---
 

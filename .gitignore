@@ -72,3 +72,23 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# UE Project generated files (VPPipeline)
+VPPipeline/Intermediate/
+VPPipeline/Saved/
+VPPipeline/DerivedDataCache/
+VPPipeline/Binaries/
+VPPipeline/Build/
+VPPipeline/*.sln
+VPPipeline/.vs/
+VPPipeline/Plugins/**/Intermediate/
+VPPipeline/Plugins/**/Binaries/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# MediaPipe model files (large binary)
+vp-tracker/models/*.task

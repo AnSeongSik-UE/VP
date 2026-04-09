@@ -42,3 +42,59 @@
 - 각 Phase별 AI 자동화 활용 포인트 명시
 - 트러블슈팅 가이드 및 성능 최적화 우선순위 포함
 - 최종 프로젝트 디렉토리 구조 명시
+
+## 2026.04.09 08:01:49
+### 보안 취약점 검토 및 수정
+- guide.md, workflow.md 전체 보안 취약점 분석 수행 (8건 식별)
+- [수정] OBS WebSocket 비밀번호 하드코딩(`password=''`) → 환경변수(`VP_OBS_PASSWORD`) 로드 방식으로 전환
+- [수정] MCP 서버 `check_obs_connection`에서 password 파라미터 노출 → 환경변수 내부 로드로 변경
+- [수정] UDP 패킷 무결성 검증 없음 → CRC32 체크섬 + 패킷 크기 제한(4096B) 추가
+- [수정] `except:` bare exception 7건 → 구체적 예외 타입(`Empty`, `OSError`, `ImportError`, `ConnectionRefusedError` 등)으로 교체
+- [수정] RawUDPSender 외부 IP 전송 시 경고 없음 → `warnings.warn` 추가
+- [수정] MCP 서버 `mcp.run()` → `mcp.run(transport="stdio")` stdio 전송만 허용
+- [추가] guide.md에 섹션 3.5 보안 가이드라인 신규 추가 (네트워크 바인딩, 패킷 검증, 비밀정보 분리, MCP 접근 제한, 예외 처리)
+- [추가] MCP 서버에 포트 범위 검증(1024~65535), 로깅(`logging`) 도입
+- [추가] workflow.md MCP 서버 코드 상단에 보안 고려사항 docstring 추가
+
+### AI 자동화 도구 명칭 변경 (Cursor → Antigravity)
+- guide.md: Cursor/Gemini CLI → Antigravity/Gemini CLI (3건)
+- guide.md: Claude/Cursor → Claude/Antigravity (1건)
+- workflow.md: Cursor → Antigravity (5건)
+- workflow.md: Cursor/Gemini CLI → Antigravity/Gemini CLI (1건)
+
+## 2026.04.09 08:16:13
+### 과잉보안 항목 롤백 (1인 개발 + localhost 환경 기준)
+- [롤백] OBS 비밀번호 환경변수(`VP_OBS_PASSWORD`) → `password=''` 단순 파라미터 복원 (localhost 전용, 외부 노출 불가)
+- [롤백] UDP CRC32 체크섬 + 패킷 크기 제한 제거 (localhost UDP 손상 가능성 0)
+- [롤백] RawUDPSender 외부 IP 경고 `warnings.warn` 제거 (외부 전송 미사용)
+- [롤백] MCP 서버 포트 범위 검증(1024~65535) 제거 (자체 호출 전용)
+- [롤백] MCP `transport="stdio"` 명시 제거 → `mcp.run()` 기본값 복원
+- [롤백] MCP 서버 `logging` 모듈 도입 제거 (print 수준 충분)
+- [롤백] MCP 서버 보안 고려사항 docstring 제거
+- [롤백] guide.md 섹션 3.5 보안 가이드라인 전체 삭제
+- [유지] `except:` bare exception → 구체적 예외 타입 (`ImportError`, `ConnectionRefusedError`, `OSError`, `Empty` 등) — 보안이 아닌 코드 품질/디버깅 용이성
+
+## 2026.04.10 07:29:12
+### workflow.md 12,000자 제한 대응 — Phase별 파일 분할
+- 기존 workflow.md (28,927자, 976줄) → 6개 파일로 분할
+- workflow.md (3,844자): 마스터 인덱스 (전체 흐름도 + Phase 링크 테이블 + 프로젝트 구조 + MCP 도구 요약)
+- phase0_setup.md (4,692자): Phase 0 — Python 환경, UE5.7 프로젝트, MCP 서버 셋업
+- phase1_tracking.md (7,858자): Phase 1 — MediaPipe 트래킹 + UDP 네트워크 발신 모듈
+- phase2_ue_plugin.md (4,240자): Phase 2 — UE5.7 C++ 수신 플러그인 개발
+- phase3_animation.md (2,783자): Phase 3 — 애니메이션 리타겟팅 + 프로파일링 최적화
+- phase4_broadcast.md (7,353자): Phase 4 — 방송 자동화 + 트러블슈팅 가이드
+- 모든 파일 12,000자 이하 (최대 7,858자) 확인 완료
+- 각 파일에 frontmatter description 추가 (슬래시 커맨드 인식용)
+
+## 2026.04.10 08:08:48
+### Phase 0: 개발 환경 셋업 완료
+- uv 0.11.6 설치 (astral.sh 공식 인스톨러)
+- `uv init vp-tracker --python 3.12` 프로젝트 초기화
+- 의존성 설치: mediapipe 0.10.33, opencv-python 4.13.0, python-osc 1.10.2, obsws-python 1.8.0, numpy 2.4.4 등 22패키지
+- `uv add "mcp[cli]"` MCP 서버 의존성 추가 (mcp 1.27.0 등 36패키지)
+- `vp-tracker/mcp_server.py` 생성 (5개 진단 도구: check_webcam, check_port_available, check_obs_connection, check_mediapipe_models, run_pipeline_diagnostics)
+- `claude_desktop_config.json` MCP 서버 2개 등록 (unreal-mcp, vp-pipeline)
+- `unreal-mcp` clone 경로: `C:\UnrealWork\tools\unreal-mcp` (VP 레포와 분리)
+- phase0_setup.md 수정: unreal-mcp 경로/엔트리포인트 실제 구조 반영
+- UE 5.7 프로젝트 생성 + 플러그인 활성화 (사용자 수동 완료)
+- MCP 서버 import 및 도구 등록 검증 완료

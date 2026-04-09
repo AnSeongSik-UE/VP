@@ -1,0 +1,14 @@
+[project]
+name = "vp-tracker"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "mcp[cli]>=1.27.0",
+    "mediapipe>=0.10.33",
+    "numpy>=2.4.4",
+    "obsws-python>=1.8.0",
+    "opencv-python>=4.13.0.92",
+    "python-osc>=1.10.2",
+]
