@@ -25,6 +25,10 @@
 		{
 			"Name": "OSC",
 			"Enabled": true
+		},
+		{
+			"Name": "VPTrackerReceiver",
+			"Enabled": true
 		}
 	]
 }

@@ -112,3 +112,20 @@
   - [PASS] PoseLandmarker 33 랜드마크: 33개
   - [FAIL] 추론 FPS: 14.1fps (목표 20fps 미달) — Face+Pose 동시 순차추론 CPU 부하
 - FPS 최적화는 Phase 3 프로파일링 단계에서 대응 예정 (모델 교체, 해상도 축소 등)
+
+## 2026.04.10 14:33:31
+### Phase 2: UE5.7 C++ 수신 플러그인 생성
+- `VPTrackerReceiver` 플러그인 디렉토리 구조 생성 (Plugins/VPTrackerReceiver/)
+- `VPTrackerReceiver.uplugin` 플러그인 정의 파일
+- `VPTrackerReceiver.Build.cs` (Sockets, Networking, AnimGraphRuntime 의존성)
+- `VPTrackerReceiver.h/.cpp` 모듈 등록
+- `VPTrackingData.h/.cpp` 트래킹 데이터 구조체 (FVPBlendshapeData, FVPPoseLandmark, FVPTrackingFrame)
+- `VPUDPReceiver.h/.cpp` UDP 수신 컴포넌트 (SPSC TQueue, FUdpSocketReceiver, 바이너리 패킷 파서)
+  - ARKit 52 블렌드쉐이프 이름 매핑 테이블 내장
+  - Python sender.py의 VPFR 매직 헤더 + 바이너리 포맷과 1:1 대응
+- `VPAnimInstance.h/.cpp` 블렌드쉐이프 -> MorphTarget 브릿지 AnimInstance
+- `VPPipeline.uproject`에 VPTrackerReceiver 플러그인 등록
+- UHT 헤더 파싱 성공 (문법/UCLASS/USTRUCT 오류 없음)
+- 빌드 이슈 해결: `Sockets/Public/IPAddress.h` include 경로 오류 수정
+- UE 에디터 컴파일 성공
+- 검증 완료: Python sender.py -> UDP -> UVPUDPReceiver 패킷 수신 정상 (BS=52, Pose=33)

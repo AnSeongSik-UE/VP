@@ -1,0 +1,19 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "VP Tracker Receiver",
+	"Description": "Receives MediaPipe tracking data via UDP for real-time avatar animation",
+	"Category": "Virtual Production",
+	"CreatedBy": "VP Pipeline",
+	"EnabledByDefault": true,
+	"CanContainContent": false,
+	"IsBetaVersion": true,
+	"Modules": [
+		{
+			"Name": "VPTrackerReceiver",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
